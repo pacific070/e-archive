@@ -1,0 +1,113 @@
+{% load static%}
+<!DOCTYPE html>
+<html lang="en" class="light-style customizer-hide" dir="ltr" data-theme="theme-default" data-assets-path="../assets/"
+    data-template="vertical-menu-template-free">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0" />
+
+    <title>NSL E-Achive</title>
+
+    <meta name="description" content="" />
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="{% static 'assets/img/favicon/favicon.ico' %}" />
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Public+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&display=swap"
+        rel="stylesheet" />
+
+    <!-- Icons. Uncomment required icon fonts -->
+    <link rel="stylesheet" href="{% static 'assets/vendor/fonts/boxicons.css' %}" />
+
+    <!-- Core CSS -->
+    <link rel="stylesheet" href="{% static 'assets/vendor/css/core.css' %}" class="template-customizer-core-css" />
+    <link rel="stylesheet" href="{% static 'assets/vendor/css/theme-default.css ' %}"
+        class="template-customizer-theme-css" />
+    <link rel="stylesheet" href="{% static 'assets/css/demo.css' %}" />
+
+    <!-- Vendors CSS -->
+    <link rel="stylesheet" href="{% static 'assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.css' %}" />
+
+    <!-- Page CSS -->
+    <!-- Page -->
+    <link rel="stylesheet" href="{% static 'assets/vendor/css/pages/page-auth.css' %}" />
+    <!-- Helpers -->
+    <script src="{% static 'assets/vendor/js/helpers.js' %}"></script>
+
+    <!--! Template customizer & Theme config files MUST be included after core stylesheets and helpers.js in the <head> section -->
+    <!--? Config:  Mandatory theme config file contain global vars & default theme options, Set your preferred theme option in this file.  -->
+    <script src="{% static 'assets/js/config.js' %}"></script>
+</head>
+
+<body>
+    <!-- Content -->
+    <div class="card-header layout-demo-info">
+        <a href="{% url 'home' %}" class="d-flex align-items-center justify-content-center gap-2">
+            <span class="app-brand-logo demo">
+                <img src="{% static 'assets/img/logo.png' %}" alt="logo" width="40" height="40">
+            </span>          
+            <span class="boxdesign">NSL IT E-Archive</span>          
+        </a>
+    </div>
+ 
+    {% url 'login' as login %}      
+
+    {% block content %}
+
+    {% endblock content %}
+
+
+    <!-- / Content -->
+        <!-- Footer -->
+         
+        <footer class="content-footer footer bg-footer-theme">
+            <div class="container-xxl d-flex flex-wrap justify-content-between py-2 flex-md-row flex-column">
+              <div class="mb-2 mb-md-0">
+                ©
+                <script>
+                  document.write(new Date().getFullYear());
+                </script>
+                 NSL Limited. All rights reserved.
+                
+              </div>
+              <div>
+                        <a href= "#"  id="emailLink" routerlink="/feedback" rel="noopener noreferrer" aria-label="Feedback" target="_blank" style="color: #696cff;margin-right: 1rem;">Feedback/Issue</a>
+                        <a href= "#" routerlink="/help"  rel="noopener noreferrer" aria-label="Help" target="_blank" style="margin-right: 1rem;">Help</a>
+                        <a href= "#" routerlink="/privacy-policy"  rel="noopener noreferrer" aria-label="Privacy Policy" target="_blank" style="margin-right: 1rem;">Privacy Policy</a>
+                        <a href= "#" routerlink="/disclaimer"  rel="noopener noreferrer" aria-label="Disclaimer" target="_blank" style="margin-right: 1rem;">Disclaimer</a>
+              </div>
+            </div>
+          </footer>
+        
+          <!-- / Footer -->
+    <!-- Core JS -->
+    <!-- build:js assets/vendor/js/core.js -->
+    <script src="{% static 'assets/vendor/libs/jquery/jquery.js' %}"></script>
+    <script src="{% static 'assets/vendor/libs/popper/popper.js' %}"></script>
+    <script src="{% static 'assets/vendor/js/bootstrap.js' %}"></script>
+    <script src="{% static 'assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.js' %}"></script>
+
+    <script src="{% static 'assets/vendor/js/menu.js' %}"></script>
+    <!-- endbuild -->
+
+    <!-- Vendors JS -->
+
+    <!-- Main JS -->
+    <script src="{% static 'assets/js/main.js' %}"></script>
+
+    <!-- Page JS -->
+
+    <!-- Place this tag in your head or just before your close body tag. -->
+    <script async defer src="https://buttons.github.io/buttons.js"></script>
+    {% block customjs %}
+
+    {% endblock customjs %}
+</body>
+
+</html>

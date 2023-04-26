@@ -1,0 +1,471 @@
+{% extends 'AdminApp/base.html' %} {% load static %} {% block content %}
+
+<div class="card">
+  <div class='px-3 py-3'>
+    <div class="mb-2">
+      <h5>Upload Document</h5>
+    </div>
+
+    <form onsubmit="return false" enctype="multipart/form-data" novalidate name="upload_document_form" class="upload_document_form" id="upload_document_form">
+      <div class="row">
+        <div id="error_msg"></div>
+        <div class="col-md-6 mb-3">
+          <label class="form-label" for="department">Department</label>
+          <select class="form-select" name="department" id="department" required>
+            <option value="">Select Department</option>
+            {%for d in departments %}
+            <option {%if department == d.name %}selected{%endif%} value="{{d.name}}">{{d.name}}</option>
+            {% endfor %}
+          </select>
+          <div class="invalid-feedback">Please select Department.</div>
+        </div>
+
+        <div class="col-md-6 mb-3">
+          <label class="form-label" for="category">Category</label>
+          <select class="form-select" name="category" id="category" required>
+            <option value="">First Select Department</option>
+          </select>
+          <div class="invalid-feedback">Please select Category.</div>
+        </div>
+
+        <div class="col-md-6 mb-3">
+          <label class="form-label" for="sub_category">Sub Category</label>
+          <select class="form-select" name="sub_category" id="sub_category" required>
+            <option value="">First Select Category</option>
+          </select>
+          <div class="invalid-feedback">Please select Sub Category.</div>
+        </div>
+
+        <div class="col-md-6 mb3">
+          <label class="form-label" for="subu_type">Sub Type</label>
+          <select class="form-select" name="sub_type" id="sub_type" required>
+            <option value="">First Select Department</option>
+          </select>
+          <div class="invalid-feedback">Please select Sub Type.</div>
+        </div>
+
+
+        <div class="col-md-6 mb-3">
+          <div class="mb-3">
+            <label class="form-label" for="version">Version</label>
+            <input type="text" class="form-control" value="" name="version" id="version"
+              placeholder="Enter Version (v1, v2, v3 v4)" required />
+            <div class="invalid-feedback">Please Enter version.</div>
+          </div>
+          <div>
+            <label class="form-label" for="description">Description</label>
+            <textarea type="" class="form-control" name="description" id="description"
+              placeholder="Enter Description" required></textarea>
+            <div class="invalid-feedback">Please Enter Description.</div>
+          </div>
+        </div>
+
+        <div class="col-md-6 mb-3">
+          <div class="drop-zone">
+            <span class="drop-zone__prompt">
+              <strong>Drop file here or click to upload</strong> <br>
+              <small class="file-allow mt-2">Allowed File .pdf, .doc, .xlsx</small>
+            </span>
+            <input type="file" name="media" id="media" class="drop-zone__input" accept=".pdf, .doc, .docs, .xlx, .xlsx" required>
+            <div class="invalid-feedback"><br>Please click here to select file.</div>
+          </div>
+          <!-- progress bar -->
+          <div class="progress mt-2 d-none" id="progress" style="height: 20px;">
+            <div id="progress_bar" class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" aria-valuenow="75" aria-valuemin="0" aria-valuemax="100" style="width: 0%"></div>
+          </div>
+        </div>
+
+      </div>
+      <!-- row end -->
+
+      <center>
+        <button type="submit" class="btn btn-primary w-50">Upload</button>
+      </center>
+    </form>
+  </div>
+
+</div>
+
+{% endblock content %} {% block customjs %}
+<script>
+
+  async function onChangeDepartment(data = {}) {
+    // Default options are marked with *
+    const url = "{% url 'filter_department_change' %}"
+    const response = await fetch(url, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        // 'Content-Type': 'application/x-www-form-urlencoded',
+      },
+      body: JSON.stringify(data), // body data type must match "Content-Type" header
+    })
+    return response.json() // parses JSON response into native JavaScript objects
+  }
+
+  async function onChangeCategory(data = {}) {
+    // Default options are marked with *
+    const url = "{% url 'filter_category_change' %}"
+    const response = await fetch(url, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        // 'Content-Type': 'application/x-www-form-urlencoded',
+      },
+      body: JSON.stringify(data), // body data type must match "Content-Type" header
+    })
+    return response.json() // parses JSON response into native JavaScript objects
+  }
+
+  document.getElementById('department').addEventListener('change', function (event) {
+    const department_name = event.target.value
+    const category_dom = document.getElementById('category')
+    const sub_category_dom = document.getElementById('sub_category')
+    const sub_type_dom = document.getElementById('sub_type')
+    sub_category_dom.innerHTML = `<option value="">First Select Category</option>`
+    if (department_name) {
+      category_dom.innerHTML = `<option value="">Category</option>`
+      sub_type_dom.innerHTML = `<option value="">Sub Type</option>`
+      onChangeDepartment({ department_name }).then((resp) => {
+        if (resp.success) {
+          const categories = resp.data.categories
+          const sub_types = resp.data.sub_types
+
+          if (categories.length === 0) {
+            category_dom.innerHTML = `<option value="">Category</option>`
+          } else {
+            category_dom.innerHTML = categories.map((item, index) => {
+              if (index === 0) {
+                return `<option value="">Category</option><option value="${item.name}">${item.name}</option>`
+              }
+              return `<option value="${item.name}">${item.name}</option>`
+            })
+          }
+
+          if (sub_types.length === 0) {
+            sub_type_dom.innerHTML = `<option value="">Sub Type</option>`
+          } else {
+            sub_type_dom.innerHTML = sub_types.map((item, index) => {
+              if (index === 0) {
+                return `<option value="">Sub Type</option><option value="${item.name}">${item.name}</option>`
+              }
+              return `<option value="${item.name}">${item.name}</option>`
+            })
+          }
+        } else {
+          console.log("error", resp.message)
+        }
+      })
+
+    } else {
+      category_dom.innerHTML = `<option value="">First Select Department</option>`
+      sub_type_dom.innerHTML = `<option value="">First Select Department</option>`
+    }
+  }, false)
+
+  document.getElementById('category').addEventListener('change', function (event) {
+    const category_name = event.target.value
+    const sub_category_dom = document.getElementById('sub_category')
+    if (category_name) {
+      sub_category_dom.innerHTML = `<option value="">Sub Category</option>`
+      onChangeCategory({ category_name }).then((resp) => {
+        if (resp.success) {
+          const sub_categories = resp.data
+
+          if (sub_categories.length === 0) {
+            sub_category_dom.innerHTML = `<option value="">Sub Category</option>`
+          } else {
+            sub_category_dom.innerHTML = sub_categories.map((item, index) => {
+              if (index === 0) {
+                return `<option value="">Sub Category</option><option value="${item.name}">${item.name}</option>`
+              }
+              return `<option value="${item.name}">${item.name}</option>`
+            })
+          }
+        } else {
+          console.log("error", resp.message)
+        }
+      })
+
+    } else {
+      sub_category_dom.innerHTML = `<option value="">First Select Category</option>`
+    }
+  }, false)
+
+  // fro drag and drop
+
+  function formatFileSize(bytes) {
+  if (bytes === 0) return '0 Bytes'
+  const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB']
+  const i = Math.floor(Math.log(bytes) / Math.log(1024))
+  const size = (bytes / Math.pow(1024, i)).toFixed(2)
+  return `${size} ${sizes[i]}`
+}
+
+  document.querySelectorAll(".drop-zone__input").forEach((inputElement) => {
+    const dropZoneElement = inputElement.closest(".drop-zone")
+
+    dropZoneElement.addEventListener("click", (e) => {
+      inputElement.click()
+    })
+
+    inputElement.addEventListener("change", (e) => {
+      if (inputElement.files.length) {
+        updateThumbnail(dropZoneElement, inputElement.files[0])
+      }
+    })
+
+    dropZoneElement.addEventListener("dragover", (e) => {
+      e.preventDefault()
+      dropZoneElement.classList.add("drop-zone--over")
+    })
+    
+    dropZoneElement.addEventListener("dragleave", (e) => {
+      e.preventDefault()
+      dropZoneElement.classList.remove("drop-zone--over")
+    })
+
+    dropZoneElement.addEventListener("dragend", (e) => {
+      e.preventDefault()
+      dropZoneElement.classList.remove("drop-zone--over")
+    })
+
+    dropZoneElement.addEventListener("drop", (e) => {
+      e.preventDefault()
+
+      if (e.dataTransfer.files.length) {
+        inputElement.files = e.dataTransfer.files
+        updateThumbnail(dropZoneElement, e.dataTransfer.files[0])
+      }
+
+      dropZoneElement.classList.remove("drop-zone--over")
+    })
+  })
+
+  /**
+   * Updates the thumbnail on a drop zone element.
+   *
+   * @param {HTMLElement} dropZoneElement
+   * @param {File} file
+   */
+
+  function updateThumbnail(dropZoneElement, file) {
+    let thumbnailElement = dropZoneElement.querySelector(".drop-zone__thumb")
+
+    // First time - remove the prompt
+    if (dropZoneElement.querySelector(".drop-zone__prompt")) {
+      dropZoneElement.querySelector(".drop-zone__prompt").remove()
+    }
+
+    // First time - there is no thumbnail element, so lets create it
+    if (!thumbnailElement) {
+      thumbnailElement = document.createElement("div")
+      thumbnailElement.classList.add("drop-zone__thumb")
+      dropZoneElement.appendChild(thumbnailElement)
+    }
+
+    thumbnailElement.dataset.label = `${file.name} (${formatFileSize(file.size)})`
+
+    // Show thumbnail for image files
+    if (file.type.startsWith("image/")) {
+      const reader = new FileReader()
+
+      reader.readAsDataURL(file)
+      reader.onload = () => {
+        thumbnailElement.style.backgroundImage = `url('${reader.result}')`
+      }
+    } else {
+      thumbnailElement.style.backgroundImage = null
+    }
+  }
+
+
+// form and upload document
+
+const form = document.getElementById('upload_document_form')
+
+    form.addEventListener('submit', function (event) {
+        event.preventDefault()
+        event.stopPropagation()
+        form.classList.add('was-validated')
+        validateForm()
+    }, false)
+
+    function createErrorAlert(msg) {
+        var alet = document.createElement('div')
+        alet.className = 'alert alert-danger alert-dismissible'
+        alet.id = 'alert_error_msg'
+        alet.setAttribute('role', 'alert')
+        alet.innerHTML = msg
+        var closeButton = document.createElement('button')
+        closeButton.type = 'button'
+        closeButton.className = 'btn-close'
+        closeButton.setAttribute('data-bs-dismiss', 'alert')
+        closeButton.setAttribute('aria-label', 'alert')
+        alet.appendChild(closeButton)
+        document.getElementById('error_msg').appendChild(alet)
+        setTimeout(() => alet.remove(), 2500)
+    }
+
+    function createModal(ticket_number) {
+        const existmodal = document.getElementById('ticket_modal')
+        if (existmodal) {
+            existmodal.remove()
+        }
+        var modal = document.createElement('div')
+        modal.className = 'modal fade'
+        modal.id = 'ticket_modal'
+        modal.setAttribute('data-bs-backdrop', 'static')
+        modal.setAttribute('data-bs-keyboard', 'false')
+
+        var modalDialog = document.createElement('div')
+        modalDialog.className = 'modal-dialog modal-sm modal-dialog-centered'
+        modalDialog.role = "document"
+
+        var modalContent = document.createElement('div')
+        modalContent.className = 'modal-content'
+
+        var modalBody = document.createElement('div')
+        modalBody.className = 'modal-body'
+        modalBody.innerHTML = `<div>
+            <span class="fw-bolder text-success">Document Uplaoded successfully.</span><br/>
+            Document ID. <strong class='text-primary fw-bold text-center'>${ticket_number}</strong>.
+            </div>`
+
+        var modalFooter = document.createElement('div')
+        modalFooter.className = 'modal-footer justify-content-center'
+
+        var closeButton2 = document.createElement('button')
+        closeButton2.type = 'button'
+        closeButton2.className = 'btn btn-primary btn-sm'
+        closeButton2.setAttribute('data-bs-dismiss', 'modal')
+        closeButton2.innerHTML = 'Upload Another'
+
+        var closeButton3 = document.createElement('a')
+        closeButton3.href = '{% url "manage_documents" %}'
+        closeButton3.className = 'btn btn-info btn-sm'
+        closeButton3.innerHTML = 'View Documnet'
+
+        modalFooter.appendChild(closeButton3)
+        modalFooter.appendChild(closeButton2)
+
+        modalContent.appendChild(modalBody)
+        modalContent.appendChild(modalFooter)
+
+        modalDialog.appendChild(modalContent)
+
+        modal.appendChild(modalDialog)
+
+        document.body.appendChild(modal)
+
+        $('#ticket_modal').modal('show')
+    }
+
+    function validateForm() {
+        const department = document.forms["upload_document_form"]["department"]
+        const category = document.forms["upload_document_form"]["category"]
+        const sub_category = document.forms["upload_document_form"]["sub_category"]
+        const sub_type = document.forms["upload_document_form"]["sub_type"]
+        const version = document.forms["upload_document_form"]["version"]
+        const description = document.forms["upload_document_form"]["description"]
+        const media = document.forms["upload_document_form"]["media"]
+
+        if (department.value == "") {
+            department.focus()
+            return false
+        }
+        if (category.value == "") {
+            category.focus()
+            return false
+        }
+        if (sub_category.value == "") {
+            sub_category.focus()
+            return false
+        }
+        if (sub_type.value == "") {
+            sub_type.focus()
+            return false
+        }
+        if (version.value == "") {
+            version.focus()
+            return false
+        }
+        if (description.value == "") {
+            description.focus()
+            return false
+        }
+        if (media.files.length === 0) {
+            media.focus()
+            createErrorAlert("Please select a file to upload document")
+            return false
+        }
+        if (media.files.length > 1) {
+            media.focus()
+            createErrorAlert("Please select only one file to upload document")
+            return false
+        }
+        const formData = new FormData()
+
+        formData.append('department', department.value.trim())
+        formData.append('category', category.value.trim())
+        formData.append('sub_category', sub_category.value.trim())
+        formData.append('sub_type', sub_type.value.trim())
+        formData.append('version', version.value.trim())
+        formData.append('description', description.value.trim())
+        formData.append('media', media.files[0])
+        upload_document(formData)
+        return true
+        
+    }
+
+    function upload_document(data = {}) {
+        // Default options are marked with *
+        const progressBar = document.getElementById('progress')
+        progressBar.classList.remove('d-none')
+        const progress = document.getElementById('progress_bar')
+        const url = "{% url 'async_upload_document' %}"
+        const xhr = new XMLHttpRequest()
+        xhr.open('POST', url, true)
+        xhr.upload.onprogress = (event) => {
+              console.log("event", event, event.loaded , event.total)
+            const percen = (event.loaded / event.total) * 100
+            progress.style.width = percen + '%'
+            if (event.loaded == event.total) {
+              progressBar.classList.add('d-none')
+            }
+        }
+
+        xhr.onload = function() {
+          if (xhr.readyState === 4) {
+            if (xhr.status === 200) {
+              const resp = JSON.parse(xhr.response)
+              console.log("resp", resp, typeof resp)
+              if (resp.success) {
+                  createModal(resp.document_number)
+                  form.classList.remove('was-validated')
+                  form.reset()
+                  const dropZoneElement = document.querySelector(".drop-zone")
+                  const thumbnailElement = dropZoneElement.querySelector(".drop-zone__thumb")
+                  if (thumbnailElement) {
+                    thumbnailElement.remove()
+                    zonePrompt = document.createElement("div")
+                    zonePrompt.classList.add("drop-zone__prompt")
+                    zonePrompt.innerHTML = `<strong>Drop file here or click to upload</strong> <br>
+                                <small class="file-allow mt-2">Allowed File .pdf, .doc, .xlsx</small>
+                                `
+                    dropZoneElement.appendChild(zonePrompt)
+                  }
+              } else {
+                  createErrorAlert(resp.message)
+              }
+            } else {
+              console.log('File upload failed.')
+            }
+          }
+      }
+      xhr.send(data)
+    }
+
+
+</script>
+{% endblock customjs %}

@@ -1,0 +1,258 @@
+{% extends 'Employee/base.html' %}
+{% load static %}
+{% block content %}
+<div class="row">
+    <div class="col-lg-4 mb-4 order-0">
+        <div class="card">
+            <div class="card-body">
+                <div class="card-title d-flex align-items-start justify-content-between">
+                    <span class="fw-bold text-primary d-block mb-4">Today's Tickets</span>
+                </div>
+                <div class="d-flex align-items-start justify-content-between">
+                    <span class="card-title cursor-pointer" onclick="today_ticket_status_redirect('Unassigned')">Raised
+                        <strong>{{issue_status_count.today_raised}}</strong> </span>
+                    <span class="card-title text-success cursor-pointer"
+                        onclick="today_ticket_status_redirect('Completed')"> Resolved
+                        <strong>{{issue_status_count.today_resolved}}</strong> </span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-8 col-md-6 order-1">
+        <div class="row">
+            <div class="col-lg-3 col-md-6 mb-4">
+                <div class="card">
+                    <div class="card-body cursor-pointer" onclick="ticket_status_redirect('Unassigned')">
+                        <div class="card-title text-center">
+                            <span class="fw-light d-block mb-1 text-secondary">Unassigned Tickets</span>
+                        </div>
+                        <h3 class="card-title text-center text-secondary mb-2">{{issue_status_count.unassigned_issue}}
+                        </h3>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6 mb-4">
+                <div class="card">
+                    <div class="card-body cursor-pointer" onclick="ticket_status_redirect('Assigned')">
+                        <div class="card-title text-center">
+                            <span class="fw-light d-block mb-1 text-primary">Assigned Tickets</span>
+                        </div>
+                        <h3 class="card-title text-center mb-2 text-primary">{{issue_status_count.assigned_issue}}</h3>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-3 col-md-6  mb-4">
+                <div class="card">
+                    <div class="card-body cursor-pointer" onclick="ticket_status_redirect('Completed')">
+                        <div class="card-title text-center">
+                            <span class="fw-light d-block mb-1 text-success">Completed Tickets</span>
+                        </div>
+                        <h3 class="card-title text-center mb-2 text-success">{{issue_status_count.completed_issue}}</h3>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-3 col-md-6 mb-4">
+                <div class="card">
+                    <div class="card-body cursor-pointer" onclick="ticket_status_redirect('Rejected')">
+                        <div class="card-title text-center">
+                            <span class="fw-light d-block text-danger mb-1">Rejected Tickets</span>
+                        </div>
+                        <h3 class="card-title text-center text-danger mb-2">{{issue_status_count.rejected_issue}}</h3>
+                        <!-- <small class="text-success fw-semibold"><i class="bx bx-up-arrow-alt"></i> +72.80%</small> -->
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    {% for i in issue_type_count %}
+    <div class="col-lg-2 col-md-6 col-xs-12 mb-3">
+        <div class="card">
+            <div class="card-body cursor-pointer" onclick="ticket_type_redirect('{{i.issue_type__name}}')">
+                <div class="card-title d-flex align-items-start justify-content-between">
+                    <span class="fw-semibold d-block mb-1">{{i.issue_type__name}}</span>
+                </div>
+                <h3 class="card-title text-center text-success mb-2">{{i.count}}</h3>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+<div class="row">
+    <div class="col-md-12 mb-4">
+        <div class="card">
+            <div class="card-body">
+                <div class="d-flex justify-content-center align-items-center" id="issue_status_canvas">
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock content %}
+
+
+{% block customjs %}
+<script>
+    var manage_url = "{% url 'employee_manage_Documents' %}"
+    function ticket_status_redirect(status) {
+        return location.href = `${manage_url}?ticket_status=${status}`;
+    }
+    function today_ticket_status_redirect(status) {
+        var todayDate = new Date().toLocaleDateString('fr-CA');
+        return location.href = `${manage_url}?ticket_status=${status}&action_date=${todayDate}`;
+    }
+
+    function ticket_type_redirect(type) {
+        return location.href = `${manage_url}?issue_type=${type}`;
+    }
+    const cardColor = "#f5f5f9";
+    const headingColor = "#697a8d";
+    const borderColor = "#eaeaea";
+    const shadeColor = "#697a8d";
+    const axisColor = "#71dd37";
+
+    document.addEventListener("DOMContentLoaded", function () {
+        // code to be executed when the DOM is ready
+        chatRenderFun();
+    });
+
+    function chatRenderFun() {
+        const data = {
+            from_date: '',
+            to_date: ''
+        }
+        IssueAnalytics(data).then((resp) => {
+            if (resp.success) {
+                const resp_data = resp.data
+                const canvas_status = document.getElementById("issue_status_canvas");
+                const status_color = ["#8592a3", "#696cff", "#71dd37", "#ff3e1d"];
+                const labels = resp_data.labels
+                const status_series = resp_data.Documents_status_series
+
+                const chat_option_status = {
+                    colors: status_color,
+                    series: status_series,
+                    chart: {
+                        height: 350,
+                        parentHeightOffset: 0,
+                        parentWidthOffset: 0,
+                        toolbar: {
+                            show: false
+                        },
+                        type: 'area'
+                    },
+
+                    dataLabels: {
+                        enabled: false
+                    },
+                    stroke: {
+                        width: 2,
+                        curve: 'smooth'
+                    },
+                    legend: {
+                        show: false
+                    },
+                    title: {
+                        text: 'Ticket Status'
+                    },
+                    markers: {
+                        size: 6,
+                        colors: 'transparent',
+                        strokeColors: 'transparent',
+                        strokeWidth: 4,
+                        discrete: [
+                            {
+                                fillColor: '#fff',
+                                seriesIndex: 0,
+                                dataPointIndex: 7,
+                                strokeColor: "#71dd37",
+                                strokeWidth: 2,
+                                size: 6,
+                                radius: 8
+                            }
+                        ],
+                        hover: {
+                            size: 7
+                        }
+                    },
+
+                    fill: {
+                        type: 'gradient',
+                        gradient: {
+                            shade: shadeColor,
+                            shadeIntensity: 0.6,
+                            opacityFrom: 0.5,
+                            opacityTo: 0.25,
+                            stops: [0, 95, 100]
+                        }
+                    },
+
+                    grid: {
+                        borderColor: borderColor,
+                        strokeDashArray: 3,
+                        padding: {
+                            top: -20,
+                            bottom: -8,
+                            left: -10,
+                            right: 8
+                        }
+                    },
+
+                    xaxis: {
+                        categories: labels,
+                        axisBorder: {
+                            show: false
+                        },
+                        axisTicks: {
+                            show: false
+                        },
+                        labels: {
+                            show: true,
+                            style: {
+                                fontSize: '13px',
+                                colors: headingColor
+                            }
+                        }
+                    },
+
+                    yaxis: {
+                        labels: {
+                            show: false
+                        },
+                        tickAmount: 4
+                    }
+                };
+                var Documents_status_chart = new ApexCharts(canvas_status, chat_option_status);
+                Documents_status_chart.render();
+
+            } else {
+                console.error(resp.message)
+            }
+            return false; // JSON data parsed by `data.json()` call
+        });
+    }
+
+    async function IssueAnalytics(data = {}) {
+        // Default options are marked with *
+        const url = "{% url 'employee_issue_analytics' %}";
+        const response = await fetch(url, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(data), // body data type must match "Content-Type" header
+        });
+        return response.json(); // parses JSON response into native JavaScript objects
+    }
+</script>
+
+{% endblock customjs %}

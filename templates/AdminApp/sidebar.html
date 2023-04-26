@@ -1,0 +1,98 @@
+{% load static %}
+<aside id="layout-menu" class="layout-menu menu-vertical menu bg-menu-theme">
+    {% url 'dashboard' as dashboard%}
+    {% url 'manage_documents' as manage_documents%}
+    {% url 'upload_document' as upload_document%}
+    {% url 'manage_employees' as manage_employees%}
+    {% url 'manage_category' as manage_category%}
+    {% url 'manage_sub_type' as manage_sub_type%}
+    {% url 'tickets_report' as tickets_report%}
+    {% url 'ticket_report_average_time' as ticket_report_average_time%}
+    {% url 'manage_departments' as manage_departments%}
+
+    <div class="app-brand demo">
+        <a href="{{dashboard}}" class="app-brand-link">
+            <span class="app-brand-logo demo">
+                <img src="{% static 'assets/img/logo.png' %}" alt="logo" width="40" height="40">
+            </span>
+            <span class="app-brand-text demo menu-text fw-bolder ms-2">E-Archive</span>
+        </a>
+
+        <a href="javascript:void(0);" class="layout-menu-toggle menu-link text-large ms-auto d-block d-xl-none">
+            <i class="bx bx-chevron-left bx-sm align-middle"></i>
+        </a>
+    </div>
+
+    <div class="menu-inner-shadow"></div>
+
+    <ul class="menu-inner py-1">
+        <!-- Dashboard -->
+        <li class="menu-item {% if request.path == dashboard %}active{% endif%}">
+            <a href="{{dashboard}}" class="menu-link">
+                <i class="menu-icon tf-icons bx bx-home-circle"></i>
+                <div data-i18n="Analytics">Dashboard</div>
+            </a>
+        </li>
+        <li class="menu-item {% if request.path == manage_documents %}active{% endif%} {% if request.path == upload_document %}active{% endif%}">
+            <a href="{{manage_documents}}" class="menu-link">
+                <i class="menu-icon tf-icons bx bxs-file-doc"></i>
+                <div data-i18n="Analytics">Manage Documents</div>
+            </a>
+        </li>
+
+        <li class="menu-item {% if request.path == manage_employees %}active{% endif%}">
+            <a href="{{manage_employees}}" class="menu-link">
+                <i class="menu-icon tf-icons bx bxs-user-account"></i>
+                <div data-i18n="Analytics">Manage Employee</div>
+            </a>
+        </li>
+
+        <li class="menu-item {% if request.path == manage_departments %}active{% endif%}">
+            <a href="{{manage_departments}}" class="menu-link">
+                <i class="menu-icon tf-icons bx bx-buildings"></i>
+                <div data-i18n="Analytics">Manage Department</div>
+            </a>
+        </li>
+
+        <li class="menu-item {% if request.path == manage_category %}active{% endif%}">
+            <a href="{{manage_category}}" class="menu-link">
+                <i class="menu-icon tf-icons bx bx-category"></i>
+                <div data-i18n="Analytics">Manage Category</div>
+            </a>
+        </li>
+
+        <li class="menu-item {% if request.path == manage_sub_type %}active{% endif%}">
+            <a href="{{manage_sub_type}}" class="menu-link">
+                <i class="menu-icon tf-icons bx bxs-grid"></i>
+                <div data-i18n="Analytics">Manage Sub-Types</div>
+            </a>
+        </li>
+
+    </ul>
+
+    <div class="my-4 border-top px-3  pt-2">
+
+        <div class="d-flex justify-content-center align-items-center">
+            <div class="flex-shrink-0 me-3">
+                <div class="avatar avatar-online">
+                    <img src="{% static 'assets/img/avatars/1.png' %}" alt class="w-px-40 h-auto rounded-circle" />
+                </div>
+            </div>
+            <div class="flex-grow-1">
+                <span class="fw-semibold d-block">{{request.user.name}}</span>
+                <small class="text-muted">Admin</small>
+            </div>
+        </div>
+
+        <div class="flex-grow-1 mt-2">
+            <a class="dropdown-item cursor-pointer" data-bs-toggle="modal" data-bs-target="#user_profile">
+                <i class="bx bx-user me-2"></i>
+                <span class="align-middle">My Profile</span>
+            </a>
+            <a class="dropdown-item" href="{% url 'admin_logout' %}">
+                <i class="bx bx-power-off me-2"></i>
+                <span class="align-middle">Log Out</span>
+            </a>
+        </div>
+    </div>
+</aside>

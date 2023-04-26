@@ -1,0 +1,149 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport"
+    content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0" />
+  <title>Tikcet Report PFD</title>
+  <meta name="description" content="" />
+  <!-- Favicon -->
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Public+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&display=swap"
+    rel="stylesheet" />
+  <style>
+    .timeline{
+     padding:5px;
+    }
+    h1 {
+    font-size:20px;
+    color:#696cff;
+    }
+    h5 {
+    font-size:18px;
+    color:#696cff;
+    }
+    li {
+     font-size:15px;
+    }
+    .text-muted{
+    color:#000 !important;
+    }
+    .heading{
+    padding-left:10px;
+    padding-bottom:10px;
+    font-size:25px;
+    color:#696cff;
+    font-weight:900;
+    line-height:10px;
+    text-decoration:underline;
+    }
+
+  </style>
+</head>
+
+<body>
+ <!-- Content wrapper -->
+    <div class="content-wrapper">
+      <div class="container-xxl flex-grow-1 container-p-y">
+              <center>
+                  <img src="{{host_name}}static/assets/img/logo.png"
+                       alt="logo" width="100"
+                       height="100"
+                  > <br><br>
+                <span class="heading">NSL Ticket Report</span>
+              </center>
+              <ul class="timeline">
+                  <li class="timeline-item timeline-item-secondary">
+                    <div class="timeline-event">
+                      <div class="timeline-header">
+                        <h5 class="">Ticket Raised (<small class="text-muted">{{issue.created_at}}</small>)</h5>
+                      </div>
+                        <ul class="timeline-body-ul">
+                          <li><small>Ticket No.</small> : {{issue.ticket_no}}</li>
+                            <li>
+                                <small>Ticket Status</small> :
+                                <span
+                                  class="badge rounded-pill
+                                  {%if issue.status == 'Unassigned' %}bg-label-secondary
+                                  {% elif issue.status == 'Assigned' %}bg-label-primary
+                                  {% elif issue.status == 'Completed' %}bg-label-success
+                                  {%else%}bg-label-danger{%endif%}"
+                                >{{issue.status}}</span>
+                              </li>
+                              <li>
+                                <small>Ticket Type</small> :
+                                <span class="text-primary">{{issue.issue_type}}</span>
+                              </li>
+                            <li><small>Description</small> : {{issue.description}}</li>
+                            <li><small>Location</small> : {{issue.location}}</li>
+                        </ul>
+                        <div class="divider-text">Raised By</div>
+                        <ul class="timeline-body-ul">
+                          <li><small>Name</small> : {{issue.emp_name}}</li>
+                          <li><small>Phone</small> : {{issue.emp_phone}}</li>
+                          {%if issue.emp_email %}
+                          <li><small>Email</small> : {{issue.emp_email}}</li>
+                          {% endif %}
+                          <li>
+                            <small>Designation</small> : {{issue.emp_designation}}
+                          </li>
+                          <li>
+                            <small>Organization</small> : {{issue.emp_organization}}
+                          </li>
+                        </ul>
+                    </div>
+                  </li>
+                  {% if issue.assign_engineer%}
+                  <li class="timeline-item timeline-item-info">
+                    <div class="timeline-event">
+                      <div class="timeline-header mb-sm-0 mb-3">
+                        <h5 class="mb-0">Ticket Assigned (<small class="text-muted">{{issue.assigned_date}}</small>)</h5>
+                      </div>
+                        <ul>
+                          <li><small>Name</small> : {{issue.assign_engineer.auth.name}}</li>
+                          <li><small>Email</small> : {{issue.assign_engineer.auth.email}}</li>
+                          <li><small>Phone</small> : {{issue.assign_engineer.phone}}</li>
+                        </ul>
+                    </div>
+                  </li>
+                  {%endif%}
+                  {% if issue.status == "Completed" %}
+                    <li class="timeline-item timeline-item-success">
+                    <div class="timeline-event">
+                      <div class="timeline-header">
+                        <h5 class="mb-0">Ticket Resolved ( <small class="text-muted">{{issue.resolved_date}}</small>)</h5>
+                      </div>
+                    </div>
+                  </li>
+                  {% endif %}
+
+                  {% if issue.status == "Rejected" %}
+                    <li class="timeline-item timeline-item-danger mb-3">
+                      <span class="timeline-indicator timeline-indicator-danger">
+                        <i class="bx bx-x-circle"></i>
+                      </span>
+                    <div class="timeline-event">
+                      <div class="timeline-header mb-sm-0 mb-3">
+                        <h5 class="mb-0">Ticket Rejected (<small class="text-muted">{{issue.rejected_date}}</small>)</h5>
+                      </div>
+                        <ul>
+                          <li><small>Reason</small> : {{issue.rejected_reason}}</li>
+                        </ul>
+                    </div>
+                  </li>
+                  <li class="timeline-end-indicator">
+                    <i class="bx bx-info-circle"></i>
+                  </li>
+                  {% endif %}
+                </ul>
+      </div>
+      <!-- / Content -->
+    </div>
+    <!-- Content wrapper -->
+</body>
+
+</html>

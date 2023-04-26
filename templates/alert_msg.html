@@ -1,0 +1,19 @@
+<!-- alert messgae on success and error -->
+{% if messages %}
+<div id="alert_msg">
+    {% for message in messages %}
+    {% if message.tags == 'error' %}
+    <div class="alert alert-danger alert-dismissible" role="alert">
+        {{ message }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    {% elif message.tags == 'success' %}
+    <div class="alert alert-success alert-dismissible" role="alert">
+        {{ message }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    {% endif %}
+    {% endfor %}
+</div>
+{% endif %}
+<!-- / end alert message -->

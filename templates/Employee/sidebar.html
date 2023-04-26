@@ -1,0 +1,88 @@
+{% load static %}
+<aside id="layout-menu" class="layout-menu menu-vertical menu bg-menu-theme">
+    {% url 'employee_dashboard' as employee_dashboard%}
+    {% url 'employee_manage_Documents' as employee_manage_Documents%}
+    {% url 'employee_manage_engineers' as employee_manage_engineers%}
+    {% url 'employee_tickets_report' as employee_tickets_report%}
+    {% url 'employee_ticket_report_average_time' as employee_ticket_report_average_time%}
+    {% url 'employee_manage_issue_type' as employee_manage_issue_type%}
+
+    <div class="app-brand demo">
+        <a href="{{employee_dashboard}}" class="app-brand-link">
+            <span class="app-brand-logo demo">
+                <img src="{% static 'assets/img/logo.png' %}" alt="logo" width="40" height="40">
+            </span>
+            <span class="app-brand-text demo menu-text fw-bolder ms-2">NSL</span>
+        </a>
+
+        <a href="javascript:void(0);" class="layout-menu-toggle menu-link text-large ms-auto d-block d-xl-none">
+            <i class="bx bx-chevron-left bx-sm align-middle"></i>
+        </a>
+    </div>
+
+    <div class="menu-inner-shadow"></div>
+
+    <ul class="menu-inner py-1">
+        <!-- Dashboard -->
+        <li class="menu-item {% if request.path == employee_dashboard %}active{% endif%}">
+            <a href="{{employee_dashboard}}" class="menu-link">
+                <i class="menu-icon tf-icons bx bx-home-circle"></i>
+                <div data-i18n="Analytics">Dashboard</div>
+            </a>
+        </li>
+        <li class="menu-item {% if request.path == employee_manage_Documents %}active{% endif%}">
+            <a href="{{employee_manage_Documents}}" class="menu-link">
+                <i class="menu-icon tf-icons bx bx-info-square"></i>
+                <div data-i18n="Analytics">Manage Tickets</div>
+            </a>
+        </li>
+
+        <li
+            class="menu-item {% if request.path == employee_tickets_report %}active{% endif%}{% if request.path == employee_ticket_report_average_time %}active{% endif%}">
+            <a href="{{employee_tickets_report}}" class="menu-link">
+                <i class="menu-icon tf-icons bx bx-file"></i>
+                <div data-i18n="Analytics">Tickets Report</div>
+            </a>
+        </li>
+
+        <li class="menu-item {% if request.path == employee_manage_engineers %}active{% endif%}">
+            <a href="{{employee_manage_engineers}}" class="menu-link">
+                <i class="menu-icon tf-icons bx bxs-id-card"></i>
+                <div data-i18n="Analytics">Manage Engineers</div>
+            </a>
+        </li>
+
+        <li class="menu-item {% if request.path == employee_manage_issue_type %}active{% endif%}">
+            <a href="{{employee_manage_issue_type}}" class="menu-link">
+                <i class="menu-icon tf-icons bx bxs-virus"></i>
+                <div data-i18n="Analytics">Manage Issue Type</div>
+            </a>
+        </li>
+    </ul>
+
+    <div class="my-4 border-top px-3  pt-2">
+
+        <div class="d-flex justify-content-center align-items-center">
+            <div class="flex-shrink-0 me-3">
+                <div class="avatar avatar-online">
+                    <img src="{% static 'assets/img/avatars/1.png' %}" alt class="w-px-40 h-auto rounded-circle" />
+                </div>
+            </div>
+            <div class="flex-grow-1">
+                <span class="fw-semibold d-block">{{request.user.name}}</span>
+                <small class="text-muted">Employee</small>
+            </div>
+        </div>
+
+        <div class="flex-grow-1 mt-2">
+            <a class="dropdown-item cursor-pointer" data-bs-toggle="modal" data-bs-target="#user_profile">
+                <i class="bx bx-user me-2"></i>
+                <span class="align-middle">My Profile</span>
+            </a>
+            <a class="dropdown-item" href="{% url 'employee_logout' %}">
+                <i class="bx bx-power-off me-2"></i>
+                <span class="align-middle">Log Out</span>
+            </a>
+        </div>
+    </div>
+</aside>

@@ -1,0 +1,131 @@
+{% extends 'AdminApp/base.html' %} {% load static %} {% block content %}
+
+<div class="card">
+  <div class='px-3 py-3'>
+    <div class="d-flex justify-content-between align-items-center mb-2">
+      <h5>Manage Sub Category</h5>
+      <button data-bs-toggle="modal" data-bs-target="#add_sub_category" class="btn btn-sm rounded btn-primary">
+        Add New Sub Category
+      </button>
+    </div>
+  </div>
+
+  <div class="table-responsive text-nowrap">
+    <table class="table">
+      <thead>
+        <tr>
+          <th>
+            #
+          </th>
+          <th>
+            Name
+          </th>
+          <th>
+            Category
+          </th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody class="table-border-bottom-0">
+        {% if sub_category_list %}
+        {% for sc in sub_category_list %}
+        <tr>
+          <td>
+            {{sc.sub_category_no}}
+          </td>
+          <td>
+            {{sc.name}}
+          </td>
+          <td>
+            <a href ="{% url 'manage_category' %}">{{sc.category.name}}</a>
+          </td>
+          <td>
+            <button data-bs-toggle="modal" data-bs-target="#update_sub_category{{sc.id}}"
+              class="btn btn-xs btn-outline-info rounded-pill">
+              Edit
+            </button>
+          </td>
+        </tr>
+
+        <!-- sub category update modal  -->
+        <div class="modal fade" id="update_sub_category{{sc.id}}" tabindex="-1" aria-hidden="true">
+          <div class="modal-dialog modal-sm" role="document">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel2">
+                  Update Sub Category
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+
+              <form method="POST" action="{% url 'update_sub_category' category_id=sc.category.id %}">
+                {% csrf_token %}
+                <div class="modal-body">
+                  <ul class="mb-3">
+                    <li>
+                      <span class="fw-light">Name: </span>{{sc.name}}
+                    </li>
+                  </ul>
+                  <div class="col mt-2 mb-3">
+                    <input type="hidden" name="sub_category_id" value="{{sc.id}}" />
+                    <label for="name" class="form-label">Name</label>
+                    <input id="name" name="name" class="form-control" placeholder="Enter a Department Name"
+                      value="{{sc.name}}" />
+                  </div>
+                </div>
+                <div class="modal-footer justify-content-center">
+                  <button type="submit" class="btn btn-primary w-100">
+                    Update
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+        <!-- sub category  update modal  -->
+        {% endfor %}
+        {% else %}
+        <tr>
+          <td colspan="6">
+            <div class="d-flex justify-content-center align-items-center flex-column">
+              <h4 class="text-center text-danger mt-2">No Data Found! <a href="{% url 'manage_category' %}"
+                  class="btn rounded-pill btn-icon btn-outline-primary btn-sm"><span
+                    class="tf-icons bx bx-refresh"></span></a> </h4>
+            </div>
+          </td>
+        </tr>
+        {% endif %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div class="modal fade" id="add_sub_category" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-sm" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel2">
+          Create Sub Category
+        </h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+
+      <form method="POST" action="{% url 'manage_sub_category' category_id=category_id %}">
+        {% csrf_token %}
+        <div class="modal-body">
+          <div class="col mt-2 mb-3">
+            <label for="name" class="form-label">Name</label>
+            <input id="name" name="name" class="form-control" placeholder="Enter Sub Category Name" />
+          </div>
+        </div>
+        <div class="modal-footer justify-content-center">
+          <button type="submit" class="btn btn-primary w-100">
+            Create
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+{% endblock content %}
